@@ -1,0 +1,11 @@
+env_variables:
+  GOOGLE_APPLICATION_CREDENTIALS: "fast-web-419215-35d284e06546.json"
+
+service: api
+runtime: python311
+
+instance_class: F4
+
+# Specify the maximum number of instances
+automatic_scaling:
+  max_instances: 1
