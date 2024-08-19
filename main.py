@@ -90,6 +90,15 @@ def user_balances():
         # Get the DataFrame
         df = get_balance_df()
         
+        # # if they ask for a blocknumber that is greater than the last time we checked a block
+        # # we will return a message letting them we know whe haven't indexed that far yet
+        if block_number > df['max_block'].astype(int).max():
+            
+            return jsonify({
+                "error": "This block has not yet been indexed.",
+                "last_indexed_block": int(df['max_block'].astype(int).max())
+            }), 400
+            
         # Get the latest balance for each user
         if address_list is not None:
             max_block_df = get_most_recent_block_balances(df, block_number, address_list)

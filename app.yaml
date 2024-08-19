@@ -1,7 +1,7 @@
 env_variables:
   GOOGLE_APPLICATION_CREDENTIALS: "fast-web-419215-35d284e06546.json"
 
-service: api
+service: etherfi
 runtime: python311
 
 instance_class: F4
