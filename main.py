@@ -33,7 +33,7 @@ def get_balance_df():
     bucket = client.get_bucket('cooldowns2')
 
     # Get the zip file blob
-    blob = bucket.blob('weeth_balances.zip')
+    blob = bucket.blob('lore_weeth_balances.zip')
 
     # Download the contents of the zip file to a bytes buffer
     zip_buffer = io.BytesIO()
@@ -43,7 +43,7 @@ def get_balance_df():
     # Open the zip file
     with zipfile.ZipFile(zip_buffer) as zip_file:
         # Read the CSV file from within the zip
-        with zip_file.open('weeth_balances.csv') as csv_file:
+        with zip_file.open('lore_weeth_balances.csv') as csv_file:
             # Read the CSV into a pandas DataFrame
             df = pd.read_csv(csv_file)
 
@@ -54,6 +54,7 @@ def get_balance_df():
 
 # # will return a dataframe with only the most recent row of data for each user that is less than or equal to the specified block_number
 def get_most_recent_block_balances(df, block_number, address_list=None):
+
 
     if address_list is not None:
         df = df.loc[df['user'].isin(address_list)]
@@ -77,8 +78,14 @@ def get_most_recent_block_balances(df, block_number, address_list=None):
 def user_balances():
     try:
         # Get the block_number from query parameters
-        block_number = request.args.get('block_number', type=int)
-        
+        block_number = request.args.get('blockNumber', type=int)
+
+        # Check if block_number is provided
+        if block_number is None:
+            return jsonify({
+                "error": "blockNumber parameter is required"
+            }), 400
+
         # Get the list of addresses from query parameters
         addresses = request.args.get('addresses')
         if addresses:
@@ -102,10 +109,11 @@ def user_balances():
         # Get the latest balance for each user
         if address_list is not None:
             max_block_df = get_most_recent_block_balances(df, block_number, address_list)
-        
+
         else:
             max_block_df = get_most_recent_block_balances(df, block_number)
         
+
         # Prepare the result in the specified format
         result = [
             {
